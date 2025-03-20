@@ -1,46 +1,56 @@
 import { Request, Response } from 'express';
-import { User, IUser } from '../models/User';
+import { User } from '../models/User';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret_jwt_super_securise';
+const JWT_SECRET = process.env.JWT_SECRET || 'ecodeli_secret_key_2024';
 
 export const register = async (req: Request, res: Response) => {
   try {
     const { email, password, firstName, lastName } = req.body;
 
+    // Vérification des champs requis
+    if (!email || !password || !firstName || !lastName) {
+      return res.status(400).json({ message: 'Tous les champs sont requis' });
+    }
+
+    // Vérification de l'existence de l'utilisateur
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Cet email est déjà utilisé' });
     }
 
+    // Création de l'utilisateur
     const user = new User({
       email,
       password,
       firstName,
-      lastName,
+      lastName
     });
 
+    // Sauvegarde
     await user.save();
 
+    // Génération du token
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { id: user._id, email: user.email },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
 
+    // Réponse
     res.status(201).json({
-      message: 'Utilisateur créé avec succès',
       token,
       user: {
         id: user._id,
         email: user.email,
         firstName: user.firstName,
-        lastName: user.lastName,
-      },
+        lastName: user.lastName
+      }
     });
   } catch (error) {
     console.error('Erreur register:', error);
-    res.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur' });
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
@@ -48,45 +58,53 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
+    // Vérification des champs requis
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email et mot de passe requis' });
+    }
+
+    // Recherche de l'utilisateur
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
-    const isValidPassword = await user.comparePassword(password);
-    if (!isValidPassword) {
+    // Vérification du mot de passe
+    const isValid = bcrypt.compareSync(password, user.password);
+    if (!isValid) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
+    // Génération du token
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { id: user._id, email: user.email },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
 
+    // Réponse
     res.json({
-      message: 'Connexion réussie',
       token,
       user: {
         id: user._id,
         email: user.email,
         firstName: user.firstName,
-        lastName: user.lastName,
-      },
+        lastName: user.lastName
+      }
     });
   } catch (error) {
     console.error('Erreur login:', error);
-    res.status(500).json({ message: 'Erreur lors de la connexion' });
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
 export const getProfile = async (req: Request, res: Response) => {
   try {
-    if (!req.user?.userId) {
+    if (!req.user?.id) {
       return res.status(401).json({ message: 'Non authentifié' });
     }
 
-    const user = await User.findById(req.user.userId).select('-password');
+    const user = await User.findById(req.user.id).select('-password');
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
@@ -99,12 +117,12 @@ export const getProfile = async (req: Request, res: Response) => {
 
 export const updateProfile = async (req: Request, res: Response) => {
   try {
-    if (!req.user?.userId) {
+    if (!req.user?.id) {
       return res.status(401).json({ message: 'Non authentifié' });
     }
 
     const { firstName, lastName, email } = req.body;
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
@@ -123,6 +141,7 @@ export const updateProfile = async (req: Request, res: Response) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        roles: user.roles
       },
     });
   } catch (error) {

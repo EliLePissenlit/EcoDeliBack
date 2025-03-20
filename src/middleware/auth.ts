@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret_jwt_super_securise';
+const JWT_SECRET = process.env.JWT_SECRET || 'ecodeli_secret_key_2024';
 
 interface JwtPayload {
-  userId: string;
+  id: string;
   email: string;
+  roles: string[];
 }
 
 declare global {
@@ -28,6 +29,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     req.user = decoded;
     next();
   } catch (error) {
+    console.error('Erreur d\'authentification:', error);
     res.status(401).json({ message: 'Token invalide' });
   }
 }; 
