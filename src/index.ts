@@ -1,49 +1,37 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import sequelize from './config/database';
 import userRoutes from './routes/userRoutes';
-import colisRoutes from './routes/colisRoutes';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 
-// Middlewares
+// Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-
-// Logging middleware
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  console.log('Body:', req.body);
-  next();
-});
 
 // Routes
 app.use('/api/users', userRoutes);
-app.use('/api/colis', colisRoutes);
 
-app.get('/', (req, res) => {
+// Route de base
+app.get('/', (_req, res) => {
   res.json({ message: 'Bienvenue sur l\'API EcoDeli' });
 });
 
-// Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Une erreur est survenue sur le serveur' });
-});
+const testConnection = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Connexion à la base de données établie avec succès.');
+  } catch (error) {
+    console.error('Impossible de se connecter à la base de données:', error);
+  }
+};
 
-mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecodeli')
-  .then(() => {
-    console.log('Connecté à MongoDB');
-    app.listen(PORT, () => {
-      console.log(`Serveur démarré sur le port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error('Erreur de connexion à MongoDB:', error);
-  }); 
+app.listen(port, () => {
+  console.log(`Serveur démarré sur le port ${port}`);
+  testConnection();
+}); 
