@@ -13,17 +13,35 @@ L'application utilise une architecture Docker avec deux conteneurs principaux :
    - Multi-stage build pour optimiser la taille de l'image
 
 2. **Conteneur Base de Données** (`postgres`)
+
    - Image : PostgreSQL 16 Alpine
    - Port : 5432
    - Volume : `ecodeli-postgres-data`
    - Configuration via variables d'environnement
 
+3. **Conteneur Frontend** (`front`)
+   - Image : Node.js 20 Alpine
+   - Port : 3000
+   - Serveur : serve
+   - Fichiers statiques : dist/
+
 ## Configuration Docker
+
+### Dockerfile Frontend
+
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+RUN npm install -g serve
+COPY dist/ ./dist/
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]
+```
 
 ### Dockerfile.prod
 
 ```dockerfile
-# Stage de build
+#  build
 FROM node:20-alpine AS builder
 WORKDIR /app
 RUN apk add --no-cache python3 make g++
@@ -32,7 +50,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Stage de production
+#  production
 FROM node:20-alpine
 WORKDIR /app
 RUN apk add --no-cache python3 make g++
