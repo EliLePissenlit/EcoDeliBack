@@ -8,7 +8,6 @@ NC='\033[0m'
 
 echo "🧪 Démarrage des tests de l'environnement de production..."
 
-# Chargement des variables d'environnement
 if [ -f .env.prod ]; then
     echo "📝 Chargement des variables d'environnement depuis .env.prod..."
     set -a

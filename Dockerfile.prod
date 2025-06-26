@@ -1,5 +1,23 @@
-#  build
-FROM node:20-alpine AS builder
+# --- DEVELOPMENT ---
+FROM node:20-alpine AS development
+
+WORKDIR /app
+
+RUN apk add --no-cache python3 make g++
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+ENV NODE_ENV=development
+
+EXPOSE 4000
+
+CMD ["npx", "nodemon", "--exec", "ts-node --files --transpile-only", "src/index.ts"]
+
+# --- BUILD ---
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
@@ -8,14 +26,12 @@ RUN apk add --no-cache python3 make g++
 COPY package*.json ./
 RUN npm ci
 
-
 COPY . .
-
 
 RUN npm run build
 
-# production
-FROM node:20-alpine
+# --- PRODUCTION ---
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
@@ -24,9 +40,8 @@ RUN apk add --no-cache python3 make g++
 COPY package*.json ./
 RUN npm ci --only=production
 
-# copie des fichiers buildés depuis le stage de build
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
 
 COPY .env.prod .env
 
