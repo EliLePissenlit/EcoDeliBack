@@ -22,6 +22,7 @@ export const authenticate: RequestHandler = async (req, res, next) => {
     }
 
     const userId = verifyJwtToken(token);
+    console.log('[AdminUsers] userId décodé:', userId);
     if (!userId) {
       logger.warn('Token invalide', { path: req.path });
       res.status(401).json({ message: 'Token invalide' });
@@ -43,6 +44,8 @@ export const authenticate: RequestHandler = async (req, res, next) => {
       role: user.role,
       path: req.path,
     });
+
+    console.log('JWT_SECRET utilisé:', process.env.JWT_SECRET);
 
     next();
   } catch (error) {

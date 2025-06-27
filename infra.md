@@ -21,7 +21,7 @@ L'application utilise une architecture Docker avec deux conteneurs principaux :
 
 3. **Conteneur Frontend** (`front`)
    - Image : Node.js 20 Alpine
-   - Port : 3000
+   - Port : 4000
    - Serveur : serve
    - Fichiers statiques : dist/
 

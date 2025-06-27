@@ -151,7 +151,7 @@ npm run dev
 ## Documentation API
 
 La documentation de l'API est disponible via Swagger (en dev) à l'adresse :
-`http://localhost:3000/api-docs`
+`http://localhost:4000/api-docs`
 
 ## Développement
 

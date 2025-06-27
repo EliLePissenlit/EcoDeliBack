@@ -20,9 +20,9 @@ export const generateJwtToken = (userId: number): string => {
 export const verifyJwtToken = (token: string): number | null => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as {
-      userId: number;
+      id: number;
     };
-    return decoded.userId;
+    return decoded.id;
   } catch (error) {
     logger.error('Erreur de vérification du token', { error });
     return null;
