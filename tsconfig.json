@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES2022",
+    "module": "CommonJS",
+    "baseUrl": "./",
+    "paths": {
+      "": [
+        "src/*"
+      ]
+    },
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "checkJs": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "es6"
+    ],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowUnreachableCode": true,
+    "useUnknownInCatchVariables": false
+  },
+  "include": [
+    "src/**/*.graphql",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "<node_internals>/**"
+  ]
+}

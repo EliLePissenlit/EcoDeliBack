@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgis/postgis:13-master
+    environment:
+      POSTGRES_DB: ecodeli-backend
+      POSTGRES_HOST_AUTH_METHOD: trust
+      TZ: 'Europe/Paris'
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_ecodeli-backend:/var/lib/postgresql/data/
+    restart: always
+
+  db-sonar:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: sonar
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      TZ: 'Europe/Paris'
+    ports:
+      - '5433:5432'
+    volumes:
+      - db_sonarqube:/var/lib/postgresql/data/
+    restart: always
+
+  ngrok:
+    image: ngrok/ngrok
+    environment:
+      - NGROK_AUTHTOKEN=2iy5NLpfrjhl02ibPWv0DE6xfU3u_7RtGrST69NirgTzx3uwv6
+    command: http host.docker.internal:4000 --domain=warm-funny-tapir.ngrok-free.app
+    ports:
+      - '4040:4040'
+
+  sonarqube:
+    image: sonarqube:community
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db-sonar:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    ports:
+      - '9000:9000'
+    depends_on:
+      - db-sonar
+    restart: always
+
+volumes:
+  db_ecodeli-backend:
+  db_sonarqube:

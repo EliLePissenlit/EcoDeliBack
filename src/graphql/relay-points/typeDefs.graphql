@@ -1,0 +1,54 @@
+type Query {
+  relayPoints: [RelayPoint!]!
+  relayPoint(id: ID!): RelayPoint
+}
+
+type Mutation {
+  createRelayPoint(input: CreateRelayPointInput!): RelayPoint!
+  updateRelayPoint(id: ID!, input: UpdateRelayPointInput!): RelayPoint!
+  deleteRelayPoint(id: ID!): Boolean!
+}
+
+type RelayPoint {
+  id: ID!
+  userId: ID!
+  fileId: ID
+  fileUrl: String
+  name: String!
+  description: String!
+  addressId: ID
+  address: Address
+  openingDays: [OpeningDay!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type OpeningDay {
+  day: String!
+  open: String!
+  close: String!
+  isOpen: Boolean!
+}
+
+input CreateRelayPointInput {
+  name: String!
+  description: String!
+  address: AddressInput
+  file: Upload
+  openingDays: [JSONObject!]!
+}
+
+input UpdateRelayPointInput {
+  name: String
+  description: String
+  address: AddressInput
+  file: Upload
+  openingDays: [JSONObject!]
+}
+
+input OpeningDayInput {
+  day: String!
+  open: String!
+  close: String!
+  isOpen: Boolean!
+}

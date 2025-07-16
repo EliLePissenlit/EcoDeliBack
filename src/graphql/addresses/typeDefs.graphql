@@ -1,0 +1,27 @@
+type Address {
+  id: ID!
+  mainText: String!
+  secondaryText: String!
+  lat: Float!
+  lng: Float!
+  placeId: String!
+  fullAddress: String!
+  locationType: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+input AddressInput {
+  mainText: String!
+  secondaryText: String!
+  lat: Float!
+  lng: Float!
+  placeId: String!
+  fullAddress: String!
+  locationType: LocationType! = IP_LOCATION
+}
+
+enum LocationType {
+  GPS_LOCATION
+  IP_LOCATION
+}

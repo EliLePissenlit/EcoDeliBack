@@ -1,0 +1,10 @@
+type Mutation {
+  contactUs(input: ContactUsInput!): Boolean!
+}
+
+input ContactUsInput {
+  email: String!
+  fullName: String!
+  message: String!
+  subject: String!
+}

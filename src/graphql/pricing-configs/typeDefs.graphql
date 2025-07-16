@@ -1,0 +1,32 @@
+type Query {
+  pricingConfigs: [PricingConfig!]!
+  activePricingConfig: PricingConfig
+}
+
+type Mutation {
+  createPricingConfig(input: CreatePricingConfigInput!): PricingConfig!
+  activatePricingConfig(id: ID!): Boolean!
+  deactivatePricingConfig(id: ID!): Boolean!
+}
+
+type PricingConfig {
+  id: ID!
+  name: String!
+  basePriceSmall: Int!
+  basePriceMedium: Int!
+  basePriceLarge: Int!
+  pricePerKm: Int!
+  pricePerMinute: Int!
+  isActive: Boolean!
+  createdAt: String!
+  updatedAt: String!
+}
+
+input CreatePricingConfigInput {
+  name: String!
+  basePriceSmall: Int!
+  basePriceMedium: Int!
+  basePriceLarge: Int!
+  pricePerKm: Int!
+  pricePerMinute: Int!
+}

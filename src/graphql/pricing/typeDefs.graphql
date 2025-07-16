@@ -1,0 +1,36 @@
+type Query {
+  getPackageCategories: [PackageCategoryInfo!]!
+  calculatePriceRangeFromGeoData(input: GeoPricingInput!): PricingRange!
+}
+
+type PackageCategoryInfo {
+  category: PackageCategory!
+  description: String!
+  maxVolume: Int!
+  maxWeight: Int!
+  emoji: String!
+}
+
+type PricingRange {
+  minPriceInCents: Int!
+  maxPriceInCents: Int!
+  estimatedDistanceInMeters: Float!
+  estimatedDurationInMinutes: Float!
+}
+
+enum PackageCategory {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+input GeoPricingInput {
+  start: GeoCoordinates!
+  relayPointId: String!
+  packageCategory: PackageCategory!
+}
+
+input GeoCoordinates {
+  lat: Float!
+  lon: Float!
+}

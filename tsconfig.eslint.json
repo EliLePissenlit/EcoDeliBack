@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src", "knexfile.ts", "jest.config.ts", "babel.config.ts", "codegen.ts", "sonar-scanner.ts"]
+}

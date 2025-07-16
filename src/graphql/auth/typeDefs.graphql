@@ -1,0 +1,35 @@
+type Mutation {
+  register(input: RegisterInput!): Boolean!
+  login(input: LoginInput!): Token!
+
+  changePasswordWhileLoggedIn(input: ChangePasswordInput!): Token!
+  resetPasswordAndSendItByEmail(input: ResetPasswordInput!): Boolean!
+
+  unsubscribe(input: UnsubscribeInput!): Boolean!
+}
+
+input RegisterInput {
+  email: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Token {
+  token: String!
+}
+
+input ChangePasswordInput {
+  currentPassword: String!
+  newPassword: String!
+}
+
+input ResetPasswordInput {
+  email: String!
+}
+
+input UnsubscribeInput {
+  message: String
+}

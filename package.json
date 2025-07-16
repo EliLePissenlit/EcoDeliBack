@@ -1,0 +1,130 @@
+{
+  "name": "@ecodeli/backend",
+  "version": "0.1.0",
+  "description": "Backend for EcoDeli",
+  "private": true,
+  "main": "src/index.ts",
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10.2.4"
+  },
+  "scripts": {
+    "generate:doc": "npx spectaql spectaql-config.yml",
+    "generate:types": "graphql-codegen --config codegen.ts  && npm run lint:fix",
+    "generate:coverage": "npx jest --coverage",
+    "test": "jest",
+    "knex:dev": "npm run migrate && npm run seed",
+    "dev": "nodemon --watch src --ext ts,graphql,js,json --exec ts-node src/index.ts",
+    "build": "rm -rf dist && tsc && ts-node ./src/graphql/buildGraphQlFiles.ts",
+    "build:deploy": "gcloud builds submit --config deploy.yaml",
+    "build:deploy:staging": "gcloud builds submit --config deploy.staging.yaml",
+    "start": "node ./dist/index.js",
+    "migrate": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback",
+    "migrate:make": "knex migrate:make",
+    "seed": "knex seed:run",
+    "lint": "eslint src/ --max-warnings=0",
+    "lint:fix": "eslint --fix src/",
+    "cspell": "cspell \"**\"",
+    "sonar": "ts-node sonar-scanner.ts",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^5.18.2",
+    "@graphql-tools/load-files": "^6.2.4",
+    "@graphql-tools/merge": "^6.2.4",
+    "@graphql-tools/schema": "^8.0.1",
+    "@jest/globals": "^29.7.0",
+    "@sendgrid/mail": "^8.1.0",
+    "@slack/web-api": "^7.2.0",
+    "@types/graphql": "^14.5.0",
+    "apollo-server-core": "^3.6.2",
+    "apollo-server-express": "^3.1.1",
+    "apollo-server-plugin-base": "^3.7.2",
+    "archiver": "^7.0.1",
+    "axios": "^1.7.5",
+    "babel-jest": "^29.2.2",
+    "bcrypt": "^5.1.1",
+    "config": "^3.3.2",
+    "date-fns": "^2.29.2",
+    "express": "^4.17.1",
+    "glob": "^10.3.10",
+    "graphql": "^15.3.0",
+    "graphql-resolvers": "^0.4.2",
+    "graphql-subscriptions": "^1.2.1",
+    "graphql-upload": "^12.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^0.21.6",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "node-cron": "^3.0.3",
+    "objection": "^2.2.3",
+    "pdf-lib": "^1.17.1",
+    "pg": "^8.3.3",
+    "sonarqube-scanner": "3.5.0",
+    "stripe": "^17.6.0",
+    "subscriptions-transport-ws": "^0.9.19",
+    "triple-beam": "^1.3.0",
+    "unzipper": "^0.12.3",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "@graphql-codegen/cli": "5.0.2",
+    "@types/archiver": "^6.0.2",
+    "@types/bcrypt": "^5.0.2",
+    "@types/config": "^3.3.0",
+    "@types/crypto-js": "^4.2.2",
+    "@types/express": "^4.17.14",
+    "@types/graphql-resolvers": "^0.3.1",
+    "@types/graphql-upload": "^8.0.11",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/lodash": "^4.14.186",
+    "@types/node-cron": "^3.0.4",
+    "@types/triple-beam": "^1.3.2",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
+    "cspell": "^5.3.12",
+    "cspell-dict-fr-fr": "^1.3.1",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.4.1",
+    "eslint-plugin-sort-destructure-keys": "^1.3.5",
+    "eslint-plugin-sort-keys-fix": "^1.1.1",
+    "husky": "^4.3.0",
+    "jest": "^29.2.2",
+    "lint-staged": "^12.1.4",
+    "nodemon": "3.1.4",
+    "prettier": "^2.1.2",
+    "supertest": "^6.3.4",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.8.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --cache --fix --max-warnings=0",
+      "prettier --write"
+    ],
+    "*.{json,css,scss,md}": [
+      "prettier --write"
+    ],
+    "*": "cspell src/index.ts"
+  },
+  "importSort": {
+    ".js, .jsx, .ts, .tsx": {
+      "style": "module"
+    }
+  }
+}

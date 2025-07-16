@@ -1,0 +1,49 @@
+type Mutation {
+  createFiles(files: [Upload!]!, parentFolderId: ID): [File!]!
+  uploadAvatar(file: Upload!): File!
+  createFolder(name: String!, parentFolderId: ID): File!
+  deleteFile(id: ID!): Boolean!
+}
+
+type Query {
+  listFiles: [File!]!
+  listFilesInFolder(folderId: ID!): [File!]!
+  getFileById(id: ID!): File!
+}
+
+type File {
+  id: ID!
+  fileName: String
+  userId: ID!
+  displayName: String!
+  isFolder: Boolean!
+  parentFolderId: ID
+  downloadUrl: String
+  createdAt: DateTime!
+  fileType: FileType!
+  updatedAt: DateTime!
+}
+
+input CreateFileInput {
+  file: Upload!
+}
+
+input CreateFilesInput {
+  files: [Upload!]!
+}
+
+enum FileType {
+  USER_AVATAR
+  USER_FOLDER
+  USER_INVOICES_FOLDER
+  INVOICE
+  USER_AVATAR_FOLDER
+  CATEGORY_ICON
+  CATEGORY_ICON_FOLDER
+  RELAY_POINT_IMAGE
+  TASK_IMAGE
+  TASK_IMAGE_FOLDER
+  RELAY_POINT_IMAGE_FOLDER
+  FOLDER
+  OTHER
+}

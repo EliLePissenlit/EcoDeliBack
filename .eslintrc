@@ -1,0 +1,58 @@
+{
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "airbnb-base",
+    "airbnb-typescript/base"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": ["./tsconfig.eslint.json"]
+  },
+  "plugins": ["sort-destructure-keys", "sort-keys-fix", "@typescript-eslint", "prettier"],
+  "settings": {
+    "import/extensions": [".js", ".jsx", ".ts", ".tsx"]
+  },
+  "rules": {
+    "no-console": 1,
+    "@typescript-eslint/no-explicit-any": 0,
+    "sort-keys-fix/sort-keys-fix": "warn",
+    "nonblock-statement-body-position": 0,
+    "newline-per-chained-call": "off",
+    "function-paren-newline": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "sort-destructure-keys/sort-destructure-keys": 0,
+    "@typescript-eslint/return-await": 0,
+    "@typescript-eslint/default-param-last": 0,
+    "@typescript-eslint/indent": 0,
+    "implicit-arrow-linebreak": 0,
+    "@typescript-eslint/ban-types": 0,
+    "operator-linebreak": 0,
+    "no-multi-spaces": 0,
+    "import/prefer-default-export": 0,
+    "@typescript-eslint/comma-dangle": 0,
+    "@typescript-eslint/naming-convention": 0,
+    "default-param-last": "off",
+    "object-curly-newline": "off",
+    "prettier/prettier": "warn",
+    "func-names": 0,
+    "no-confusing-arrow": 0,
+    "import/extensions": 0,
+    "max-len": 0,
+    "lines-between-class-members": 0,
+    "no-restricted-syntax": 0,
+    "arrow-body-style": ["error", "as-needed"],
+    "no-await-in-loop": 0,
+    "class-methods-use-this": 0
+  }
+}

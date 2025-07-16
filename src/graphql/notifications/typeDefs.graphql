@@ -1,0 +1,38 @@
+type Query {
+  getNotifications: [Notification!]!
+}
+
+type Mutation {
+  markAllNotificationsAsRead: Boolean!
+  contactUsers(input: ContactUsersInput!): Boolean!
+}
+
+type Subscription {
+  onNewNotification: Notification!
+}
+
+type Notification {
+  id: ID!
+  title: String!
+  type: NotificationType!
+  isRead: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum NotificationType {
+  MESSAGE
+  INVOICE_ADDED
+  TRANSACTION_STATUS_UPDATED
+  TASK_APPLICATION_RECEIVED
+  TASK_APPLICATION_ACCEPTED
+  TASK_APPLICATION_REJECTED
+  TASK_COMPLETED
+  TASK_VALIDATED
+  TASK_STATUS_CHANGED
+}
+
+input ContactUsersInput {
+  message: String!
+  users: [ID!]!
+}

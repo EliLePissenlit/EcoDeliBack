@@ -1,0 +1,14 @@
+info:
+  title: 'API Documentation'
+  description: 'Auto-generated documentation for the API.'
+  version: '1.0.0'
+
+introspection:
+  url: 'http://localhost:4000/graphql'
+  method: 'POST'
+  headers:
+    Content-Type: 'application/json'
+
+output:
+  format: 'html'
+  target: 'docs'

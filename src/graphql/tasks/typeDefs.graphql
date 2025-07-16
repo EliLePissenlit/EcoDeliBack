@@ -1,0 +1,258 @@
+# =============================================================================
+# SCHÉMA GRAPHQQL - SYSTÈME D'ANNONCES ET LIVRAISONS
+# =============================================================================
+# Ce fichier définit tous les types, queries et mutations pour le système
+# de gestion des tâches (services et livraisons) avec candidatures et messagerie
+
+# =============================================================================
+# QUERIES - Récupération de données
+# =============================================================================
+type Query {
+  # Récupération d'une tâche spécifique avec tous ses détails
+  getTask(id: ID!): Task
+
+  # Liste des tâches avec filtres optionnels (par défaut: tâches publiées)
+  listTasks(filters: TaskFilters): [Task!]!
+
+  # Tâches créées par l'utilisateur connecté
+  getMyTasks: [Task!]!
+
+  # Tâches en attente de validation admin (ADMIN uniquement)
+  listPendingTasks: [Task!]!
+
+  # Tâches filtrées par statut (ADMIN uniquement)
+  listTasksByStatus(status: TaskStatus!): [Task!]!
+
+  # Candidatures de l'utilisateur connecté
+  getMyApplications: [TaskApplication!]!
+
+  # Candidatures pour une tâche spécifique (propriétaire uniquement)
+  getTaskApplications(taskId: ID!): [TaskApplication!]!
+
+  # Messages d'une tâche (participants uniquement)
+  getTaskMessages(taskId: ID!): [TaskMessage!]!
+
+  # Nombre de messages non lus pour l'utilisateur connecté
+  getUnreadMessagesCount: Int!
+}
+
+# =============================================================================
+# MUTATIONS - Modification de données
+# =============================================================================
+type Mutation {
+  # CRUD des tâches
+  createTask(input: CreateTaskInput!): Task!
+  updateTask(id: ID!, input: UpdateTaskInput!): Task!
+  deleteTask(id: ID!): Boolean!
+
+  # Validation admin des tâches
+  approveTask(id: ID!): Task!
+  rejectTask(id: ID!, reason: String!): Task!
+
+  # Gestion des candidatures
+  applyToTask(input: ApplyToTaskInput!): TaskApplication!
+  acceptApplication(applicationId: ID!): TaskApplication!
+  rejectApplication(applicationId: ID!, reason: String!): TaskApplication!
+
+  # Démarrage, completion et validation des tâches
+  startTask(taskId: ID!): Task!
+  completeTask(taskId: ID!): Task! # Le CLIENT marque comme complété
+  markAnIntermediaryStepForATask(taskId: ID!, intermediaryStep: AddressInput!): Task!
+  validateTaskCompletion(taskId: ID!, validationCode: String!): Task! # Le PRESTATAIRE valide
+  # Messagerie
+  sendTaskMessage(input: SendTaskMessageInput!): TaskMessage!
+  markMessagesAsRead(taskId: ID!): Boolean!
+}
+
+# =============================================================================
+# TYPES PRINCIPAUX
+# =============================================================================
+
+# Entité principale représentant une annonce (service ou livraison)
+type Task {
+  id: ID!
+  userId: ID! # Propriétaire de la tâche
+  user: User! # Détails du propriétaire
+  categoryId: ID # Catégorie (pour les services uniquement)
+  category: Category # Détails de la catégorie
+  type: TaskType! # SERVICE ou SHIPPING
+  status: TaskStatus! # Statut actuel de la tâche
+  title: String! # Titre de l'annonce
+  description: String! # Description détaillée
+  estimatedDuration: Int # Durée estimée en minutes (services)
+  fileId: ID # Fichier joint optionnel
+  fileUrl: String # URL de téléchargement du fichier
+  addressId: ID! # Adresse principale
+  address: Address! # Détails de l'adresse
+  shipping: Shipping # Détails de livraison (si type SHIPPING)
+  applications: [TaskApplication!]! # Candidatures reçues
+  messages: [TaskMessage!]! # Messages échangés
+  calculatedPriceInCents: Int # Prix calculé automatiquement
+  validationCode: String # Code de validation (fourni au prestataire)
+  completedAt: DateTime # Date de completion
+  validatedAt: DateTime # Date de validation finale
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# Détails spécifiques pour les livraisons
+type Shipping {
+  id: ID!
+  taskId: ID! # Référence vers la tâche
+  packageCategory: PackageCategory! # Taille du colis
+  pickupAddressId: ID! # Adresse de départ
+  pickupAddress: Address! # Détails adresse départ
+  deliveryAddressId: ID! # Adresse de destination
+  deliveryAddress: Address! # Détails adresse destination
+  packageDetails: JSONObject # Détails supplémentaires du colis
+  estimatedDistanceInMeters: Float # Distance calculée
+  estimatedDurationInMinutes: Float # Durée estimée
+  calculatedPriceInCents: Int # Prix calculé selon la config
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# Candidature d'un prestataire à une tâche
+type TaskApplication {
+  id: ID!
+  task: Task! # Tâche concernée
+  taskId: ID! # Tâche concernée
+  applicantId: ID! # Candidat
+  applicant: User! # Détails du candidat
+  status: ApplicationStatus! # Statut de la candidature
+  message: String! # Message de motivation
+  validationCode: String # Code unique pour validation (fourni par le client)
+  startedAt: DateTime # Date de démarrage
+  completedAt: DateTime # Date de completion
+  validatedAt: DateTime # Date de validation
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# Message échangé entre participants d'une tâche
+type TaskMessage {
+  id: ID!
+  taskId: ID! # Tâche concernée
+  senderId: ID! # Expéditeur
+  sender: User! # Détails de l'expéditeur
+  receiverId: ID! # Destinataire
+  receiver: User! # Détails du destinataire
+  content: String! # Contenu du message
+  messageType: MessageType! # Type de message
+  isRead: Boolean! # Lu ou non
+  createdAt: DateTime!
+}
+
+# Notification système
+type Notification {
+  id: ID!
+  title: String!
+  type: NotificationType!
+  userId: ID!
+  isRead: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# =============================================================================
+# ENUMS - Valeurs prédéfinies
+# =============================================================================
+
+# Type de tâche
+enum TaskType {
+  SERVICE # Service à rendre (jardinage, ménage, etc.)
+  SHIPPING # Livraison de colis
+}
+
+# Statut d'une tâche
+enum TaskStatus {
+  DRAFT # Brouillon (en attente de validation admin)
+  PUBLISHED # Publiée (visible par tous)
+  IN_PROGRESS # En cours (candidature acceptée)
+  COMPLETED # Complétée (travail terminé)
+  DONE # Terminée (validée par le client)
+  CANCELLED # Annulée (refusée par admin)
+}
+
+# Taille du colis pour les livraisons
+enum PackageCategory {
+  SMALL # Petit colis
+  MEDIUM # Colis moyen
+  LARGE # Gros colis
+}
+
+# Statut d'une candidature
+enum ApplicationStatus {
+  PENDING # En attente de réponse
+  ACCEPTED # Acceptée
+  IN_PROGRESS # En cours de travail
+  REJECTED # Refusée
+  COMPLETED # Travail terminé
+  VALIDATED # Validé par le client
+}
+
+# Type de message
+enum MessageType {
+  TEXT # Message texte normal
+  VALIDATION_CODE # Message contenant un code de validation
+  SYSTEM # Message système automatique
+}
+
+# =============================================================================
+# INPUTS - Données d'entrée pour les mutations
+# =============================================================================
+
+# Création d'une nouvelle tâche
+input CreateTaskInput {
+  type: TaskType! # Obligatoire
+  # Champs pour les services
+  categoryId: ID # Catégorie obligatoire pour les services
+  estimatedDuration: Int # Durée en minutes
+  # Champs pour les livraisons
+  packageCategory: PackageCategory
+  pickupAddress: AddressInput
+  deliveryAddress: AddressInput
+  relayPointId: ID
+  packageDetails: JSONObject
+
+  # Champs communs
+  title: String!
+  description: String!
+  address: AddressInput! # Adresse principale
+  file: Upload # Fichier optionnel
+}
+
+# Mise à jour d'une tâche existante
+input UpdateTaskInput {
+  title: String
+  description: String
+  estimatedDuration: Int
+  file: Upload
+  address: AddressInput
+  packageDetails: JSONObject
+}
+
+# Candidature à une tâche
+input ApplyToTaskInput {
+  taskId: ID! # Tâche concernée
+  message: String! # Message de motivation
+}
+
+# Envoi d'un message
+input SendTaskMessageInput {
+  taskId: ID! # Tâche concernée
+  receiverId: ID! # Destinataire
+  content: String! # Contenu du message
+  messageType: MessageType # Type (optionnel, défaut: TEXT)
+}
+
+# Filtres pour la recherche de tâches
+input TaskFilters {
+  type: TaskType # Filtrer par type
+  status: TaskStatus # Filtrer par statut
+  categoryId: ID # Filtrer par catégorie
+  location: AddressInput # Filtrer par localisation
+  radius: Int # Rayon de recherche en km
+  durationMin: Int # Durée minimale en heures
+  durationMax: Int # Durée maximale en heures
+}

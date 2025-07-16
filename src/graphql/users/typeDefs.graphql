@@ -1,0 +1,50 @@
+type Query {
+  me: User
+  listUsers: [User!]!
+}
+
+type Mutation {
+  updateUser(input: UpdateUserInput!): User!
+  suspendUser(id: ID!): User!
+  saveLastPosition(input: AddressInput!): User!
+}
+
+type User {
+  id: ID!
+  email: String!
+
+  firstName: String
+  lastName: String
+  phone: String
+
+  stripeCustomerId: String
+
+  avatar: String
+
+  password: String
+  passwordUpdatedAt: DateTime
+
+  isUserEmailVerified: Boolean!
+  isSuspended: Boolean!
+  isUnderSurveillance: Boolean!
+
+  role: Role!
+
+  lastLoginAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input UpdateUserInput {
+  firstName: String
+  lastName: String
+  phone: String
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  BASIC # the role who permit to create a package and do a delivery
+  TESTER
+  PARTNER # the role who permit to create a relay point
+}

@@ -1,0 +1,9 @@
+export const SLACK_CHANNELS = {
+  ADMIN_NOTIFICATIONS: 'C087PH75VD4',
+  CONTACT_US: 'C087PH75VD4',
+  ONBOARDING: 'C07B112SFHDX',
+  SUBSCRIPTIONS: 'C087PH75VD4',
+  UNSUBSCRIBES: 'C087PH75VD4', // Canal pour les notifications admin
+};
+
+export type SlackChannel = (typeof SLACK_CHANNELS)[keyof typeof SLACK_CHANNELS];

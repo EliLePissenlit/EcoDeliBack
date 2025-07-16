@@ -1,0 +1,86 @@
+type Query {
+  getTransaction(id: ID!): Transaction
+  getUserTransactions: [Transaction!]!
+  getActiveSubscriptions: [Transaction!]!
+}
+
+type Mutation {
+  createCustomPayment(input: CreateCustomPaymentInput!): PaymentIntentResponse!
+  createSubscription(input: CreateSubscriptionInput!): SubscriptionResponse!
+  cancelSubscription(input: CancelSubscriptionInput!): CancelSubscriptionResponse!
+}
+
+type Transaction {
+  id: ID!
+  userId: ID!
+  stripeCustomerId: String!
+  stripePriceId: String!
+  stripeIntentId: String
+  priceId: String
+  stripeSubscriptionId: String
+  stripeInvoiceId: String
+  amountInCents: Int!
+  currency: String!
+  name: String
+  description: String
+  metadata: JSONObject
+  status: TransactionStatus!
+  isSubscription: Boolean!
+  autoRenew: Boolean
+  trialEnd: DateTime
+  currentPeriodStart: DateTime
+  currentPeriodEnd: DateTime
+  canceledAt: DateTime
+  paidAt: DateTime
+  relatedInvoice: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum TransactionStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELED
+  SUBSCRIPTION_ACTIVE
+  SUBSCRIPTION_CANCELED
+  SUBSCRIPTION_EXPIRED
+  SUBSCRIPTION_INITIATED
+}
+
+input CreateCustomPaymentInput {
+  amount: Int!
+  currency: String!
+  metadata: JSONObject
+  couponCode: String
+}
+
+type PaymentIntentResponse {
+  clientSecret: String!
+  intentId: String!
+  amount: Float!
+  transactions: [Transaction!]!
+}
+
+input CreateSubscriptionInput {
+  priceId: String!
+  metadata: JSONObject
+  autoRenew: Boolean
+}
+
+input CancelSubscriptionInput {
+  email: String!
+  immediately: Boolean
+}
+
+type CancelSubscriptionResponse {
+  ok: Boolean!
+  message: String
+}
+
+type SubscriptionResponse {
+  clientSecret: String!
+  intentId: String!
+  transaction: Transaction!
+}

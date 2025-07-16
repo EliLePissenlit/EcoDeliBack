@@ -1,0 +1,16 @@
+type Query {
+  getUserPaymentMethods: [PaymentMethod!]!
+}
+
+type Mutation {
+  deletePaymentMethod(paymentMethodId: ID!): Boolean!
+}
+
+type PaymentMethod {
+  id: ID!
+  brand: String!
+  last4: String!
+  expiryMonth: Int!
+  expiryYear: Int!
+  isDefault: Boolean!
+}

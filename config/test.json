@@ -1,0 +1,61 @@
+{
+  "server": {
+    "port": 4000,
+    "version": "1.0.0",
+    "applicationUrl": "http://localhost:3000/"
+  },
+  "db": {
+    "client": "pg",
+    "connection": {
+      "host": "localhost",
+      "port": 5432,
+      "user": "postgres",
+      "password": "",
+      "database": "ecodeli-backend"
+    }
+  },
+  "security": {
+    "jwt": {
+      "expiresIn": "30d",
+      "secret": "changeMeInProduction"
+    },
+    "hash": {
+      "rounds": 12
+    }
+  },
+  "logger": {
+    "level": "info",
+    "datadogApiKey": null,
+    "env": "local"
+  },
+  "map": {
+    "apiKey": "AIzaSyDVUtIxRFMZu-oI8sOAVnYe_mVdnd5Cw0E"
+  },
+  "assets": {
+    "port": 3001,
+    "path": "./assets/",
+    "baseUrl": "http://localhost:3001/assets/"
+  },
+  "sendgrid": {
+    "apiKey": "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"
+  },
+  "cloudStorage": {
+    "skipStorage": false,
+    "usersBucket": "d-ecodeli-backend-users",
+    "avatarsBucket": "d-ecodeli-backend-users-avatar",
+    "filesBucket": "d-ecodeli-backend-files",
+    "keyFilename": "gcs-developer.json"
+  },
+  "slack": {
+    "token": "xoxb-73333dqzd53131511-7347961782610-RUfhXchWwzqbS1RCBZ3Hwtit"
+  },
+  "sonarqube": {
+    "serverUrl": "http://localhost:9000",
+    "token": "sqp_180c1dea882cf99bd12f2480c92b394805f88407",
+    "projectKey": "starter-backend"
+  },
+  "stripe": {
+    "secretKey": "sk_test_51QtbgeGgjjJWKE7PTNSKXAHLcOWkO9LdUZfHwg7ccd4jTc89ZNqefdIpcOYmdWstheivqk44TuHLojUZR69MiRtz00JulvxvPQ",
+    "webhooksSecretKey": "whsec_6c34927c0e27752f836cfc5c72c0e084f9bbf4a5d57cd400a911fc309bac5f92"
+  }
+}
